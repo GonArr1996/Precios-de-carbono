@@ -71,10 +71,10 @@ typeof(P_c$Anio)
 str(P_c)
 
 
+P_c$Anio = as.Date(P_c$Anio, format = "%Y")
 
 
-
-UEG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = UE, color = "Precio"), na.rm =T) + geom_line(aes(x = Fecha, y = (((PIB_UE/100000) - 120))*2 , color = "PIB"), na.rm = T) + scale_y_continuous(
+UEG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = UE, color = "Precio"), na.rm =T) + geom_line(aes(x = Anio, y = (((PIB_UE/100000) - 120))*2 , color = "PIB"), na.rm = T) + scale_y_continuous(
        
        # Primer Eje
        name = "Precio (USD/tCO2e)",
@@ -82,50 +82,6 @@ UEG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = UE, color = "Precio"), na.rm =
        # Segundo Eje
        sec.axis = sec_axis(~./4.6875*100000 , name="PIB (millones de dólares)")
 )
-
-
-
-
-
-# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
-
-
-# lUEgo otra linea qUE representa llegada de vacunas y disminucion de casos
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
-
-
-# Agregamos una ultima linea representando el inicio de la tercera ola:
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
-
-
-# Protocolo de Kyoto entró en vigor
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
-
-# Fecha de firma acUErdo de Paris
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-UEG <- UEG +
-       scale_linetype_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = 6,
-                                      PrimerasVacunas = 2,
-                                      TerceraOla = 1, PKyotoVigor = 4,
-                                      TParisVigor = 3))
-
-
-
-
-
-UEG <- UEG + theme_minimal()
-
-
 
 UEG <- UEG +
        xlab("Año") + # nombre de eje x
@@ -153,6 +109,48 @@ UEG <- UEG +
 
 UEG <- UEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
 
+#install.packages("ggnewscale")
+library(ggnewscale)
+
+
+# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
+UEG <- UEG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
+
+
+# lUEgo otra linea qUE representa llegada de vacunas y disminucion de casos
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
+
+
+
+
+# Protocolo de Kyoto entró en vigor
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+UEG <- UEG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(SanaDistancia = "Green",
+                                      PrimerasVacunas = "Brown",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black"))
+
+
+
+
+
+UEG <- UEG + theme_minimal()
+
+
+
+
 
 
 
@@ -161,7 +159,7 @@ ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_Corea , color = "PIB"))
 
 
 
-CoreaG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = Corea, color = "Precio"), na.rm = T) + geom_line(aes(x = Fecha, y = (PIB_Corea/100000)*2.5 - 12.5 , color = "PIB"), na.rm = T) + scale_y_continuous(
+CoreaG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = Corea, color = "Precio"), na.rm = T) + geom_line(aes(x = Anio, y = (PIB_Corea/100000)*2.5 - 12.5 , color = "PIB"), na.rm = T) + scale_y_continuous(
        
        # Primer Eje
        name = "Precio (USD/tCO2e)",
@@ -169,50 +167,6 @@ CoreaG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = Corea, color = "Precio"), n
        # Segundo Eje
        sec.axis = sec_axis(~.*80000/2 + 500000, name="PIB (millones de dólares)", breaks = c(1000000, 1200000, 1400000, 1600000))
 )
-
-
-
-
-
-
-# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
-
-
-# lCoreago otra linea qCorea representa llegada de vacunas y disminucion de casos
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
-
-
-# Agregamos una ultima linea representando el inicio de la tercera ola:
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
-
-
-# Protocolo de Kyoto entró en vigor
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
-
-# Fecha de firma acCoreardo de Paris
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-CoreaG <- CoreaG +
-       scale_linetype_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = 6,
-                                      PrimerasVacunas = 2,
-                                      TerceraOla = 1, PKyotoVigor = 4,
-                                      TParisVigor = 3))
-
-
-
-
-
-CoreaG <- CoreaG + theme_minimal()
-
 
 
 CoreaG <- CoreaG +
@@ -238,6 +192,50 @@ CoreaG <- CoreaG +
 
 CoreaG <- CoreaG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
 
+
+
+
+
+# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
+CoreaG <- CoreaG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
+
+
+# lCoreago otra linea qCorea representa llegada de vacunas y disminucion de casos
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
+
+
+
+
+
+# Protocolo de Kyoto entró en vigor
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+CoreaG <- CoreaG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(SanaDistancia = "Green",
+                                      PrimerasVacunas = "Brown",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black"))
+
+
+
+
+
+CoreaG <- CoreaG + theme_minimal()
+
+
+
+
+
 CoreaG
 
 
@@ -251,7 +249,7 @@ ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_CaliforniaQuebec, color = "PIB"),
 
 
 
-CALQUEG <- ggplot(P_c) + geom_line(data = P_c2, aes_(x = P_c2$Fecha, y = P_c2$California_Quebec, group = 1, color = "Precio"), na.rm = T) + geom_line(aes(x = Fecha, y = (PIB_CaliforniaQuebec/400000) - 5, color = "PIB"), na.rm = T) + scale_y_continuous(
+CALQUEG <- ggplot(P_c) + geom_line(data = P_c2, aes_(x = P_c2$Fecha, y = P_c2$California_Quebec, group = 1, color = "Precio"), na.rm = T) + geom_line(aes(x = Anio, y = (PIB_CaliforniaQuebec/400000) - 5, color = "PIB"), na.rm = T) + scale_y_continuous(
        
        # Primer Eje
        name = "Precio (USD/tCO2e)",
@@ -259,49 +257,6 @@ CALQUEG <- ggplot(P_c) + geom_line(data = P_c2, aes_(x = P_c2$Fecha, y = P_c2$Ca
        # Segundo Eje
        sec.axis = sec_axis(~.*400000 + 2000000, name="PIB (millones de dólares)", breaks = c(9000000, 10000000, 11000000))
 )
-
-
-
-
-
-# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
-
-
-# lCALQUEGo otra linea qCorea representa llegada de vacunas y disminucion de casos
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
-
-
-# Agregamos una ultima linea representando el inicio de la tercera ola:
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
-
-
-# Protocolo de Kyoto entró en vigor
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
-
-# Fecha de firma acCoreardo de Paris
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-CALQUEG <- CALQUEG +
-       scale_linetype_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = 6,
-                                      PrimerasVacunas = 2,
-                                      TerceraOla = 1, PKyotoVigor = 4,
-                                      TParisVigor = 3))
-
-
-
-
-
-CALQUEG <- CALQUEG + theme_minimal()
-
 
 
 CALQUEG <- CALQUEG +
@@ -332,6 +287,44 @@ CALQUEG <- CALQUEG + scale_color_manual(name = "Indicador", values = c(PIB = "Re
 
 
 
+# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
+CALQUEG <- CALQUEG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
+
+
+# lCALQUEGo otra linea qCorea representa llegada de vacunas y disminucion de casos
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
+
+
+# Protocolo de Kyoto entró en vigor
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+CALQUEG <- CALQUEG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(SanaDistancia = "Green",
+                                      PrimerasVacunas = "Brown",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black"))
+
+
+
+
+
+CALQUEG <- CALQUEG + theme_minimal()
+
+
+
+
+
+
 
 CALQUEG
 
@@ -346,7 +339,7 @@ ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_RGGI, color = "PIB"), na.rm = T)
 
 
 
-RGGIGG <- ggplot(P_c) + geom_line(data = P_c3, aes_(x = P_c3$Fecha, y = P_c3$RGGI, group = 1, color = "Precio"), na.rm = T) + geom_line(aes(x = Fecha, y = (PIB_RGGI/2000000)*2 - 7, color = "PIB"), na.rm = T) + scale_y_continuous(
+RGGIGG <- ggplot(P_c) + geom_line(data = P_c3, aes_(x = P_c3$Fecha, y = P_c3$RGGI, group = 1, color = "Precio"), na.rm = T) + geom_line(aes(x = Anio, y = (PIB_RGGI/2000000)*2 - 7, color = "PIB"), na.rm = T) + scale_y_continuous(
        
        # Primer Eje
        name = "Precio (USD/tCO2e)",
@@ -354,49 +347,6 @@ RGGIGG <- ggplot(P_c) + geom_line(data = P_c3, aes_(x = P_c3$Fecha, y = P_c3$RGG
        # Segundo Eje
        sec.axis = sec_axis(~.*2000000/2 + 7000000, name="PIB (millones de dólares)", breaks = c(14000000, 16000000, 18000000))
 )
-
-
-
-
-
-# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
-
-
-# lRGGIGGo otra linea qCorea representa llegada de vacunas y disminucion de casos
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
-
-
-# Agregamos una ultima linea representando el inicio de la tercera ola:
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
-
-
-# Protocolo de Kyoto entró en vigor
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
-
-# Fecha de firma acCoreardo de Paris
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-RGGIGG <- RGGIGG +
-       scale_linetype_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = 6,
-                                      PrimerasVacunas = 2,
-                                      TerceraOla = 1, PKyotoVigor = 4,
-                                      TParisVigor = 3))
-
-
-
-
-
-RGGIGG <- RGGIGG + theme_minimal()
-
 
 
 RGGIGG <- RGGIGG +
@@ -426,6 +376,39 @@ RGGIGG <- RGGIGG +
 RGGIGG <- RGGIGG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
 
 
+# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
+RGGIGG <- RGGIGG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
+
+
+# lRGGIGGo otra linea qCorea representa llegada de vacunas y disminucion de casos
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
+
+
+# Protocolo de Kyoto entró en vigor
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+RGGIGG <- RGGIGG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(SanaDistancia = "Green",
+                                      PrimerasVacunas = "Brown",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black"))
+
+
+
+
+
+RGGIGG <- RGGIGG + theme_minimal()
+
 
 
 RGGIGG
@@ -441,7 +424,7 @@ ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_NuevaZelanda, color = "PIB"))
 
 
 
-NZG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio"), na.rm = T) + geom_line(aes(x = Fecha, y = (PIB_NuevaZelanda/3750)*2 - 60, color = "PIB"), na.rm = T) + scale_y_continuous(
+NZG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio"), na.rm = T) + geom_line(aes(x = Anio, y = (PIB_NuevaZelanda/3750)*2 - 60, color = "PIB"), na.rm = T) + scale_y_continuous(
        
        # Primer Eje
        name = "Precio (USD/tCO2e)",
@@ -449,49 +432,6 @@ NZG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio"
        # Segundo Eje
        sec.axis = sec_axis(~.*3750/2 + 113000, name="PIB (millones de dólares)", breaks = c(125000, 150000, 175000, 200000, 225000))
 )
-
-
-
-
-
-# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
-
-
-# lNZGo otra linea qUE representa llegada de vacunas y disminucion de casos
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
-
-
-# Agregamos una ultima linea representando el inicio de la tercera ola:
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
-
-
-# Protocolo de Kyoto entró en vigor
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
-
-# Fecha de firma acUErdo de Paris
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-NZG <- NZG +
-       scale_linetype_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = 6,
-                                      PrimerasVacunas = 2,
-                                      TerceraOla = 1, PKyotoVigor = 4,
-                                      TParisVigor = 3))
-
-
-
-
-
-NZG <- NZG + theme_minimal()
-
 
 
 NZG <- NZG +
@@ -520,6 +460,40 @@ NZG <- NZG +
 
 NZG <- NZG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
 
+
+
+# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
+NZG <- NZG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
+
+
+# lNZGo otra linea qUE representa llegada de vacunas y disminucion de casos
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
+
+
+# Protocolo de Kyoto entró en vigor
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+NZG <- NZG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(SanaDistancia = "Green",
+                                      PrimerasVacunas = "Brown",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black"))
+
+
+
+
+
+NZG <- NZG + theme_minimal()
 
 
 NZG
