@@ -1,0 +1,637 @@
+---
+title: "Precios de mercados de carbono"
+author: "Gonzalo A."
+date: "5/30/2022"
+output: pdf_document
+---
+
+
+```{r Setup, echo=TRUE}
+rm(list=ls()) # borrar todo en la memoria
+options(digits = 10) # decimales
+options(scipen = 100) # para evitar notacion scientifica qUE afectaba la leyenda de la grafica
+knitr::opts_chunk$set(echo = FALSE) # Para qUE predeterminadamente no salga el output de los codigos.
+
+#######################
+####  Directorio  #####
+#######################
+#### (Cambiar solo despUEs del "~/ a donde este guardado la carpeta) 
+knitr::opts_knit$set(root.dir = "~/Desktop/Precios del carbono")  # Directorio
+
+######################
+
+knitr::opts_chunk$set(out.width = '100%', dpi=300) # Resolucion y tamanio de figuras
+knitr::opts_chunk$set(fig.env="figure") # Latex figure environment
+
+# tinytex::install_tinytex() # Por si no está instalado o acualizado correr esta linea.
+```
+
+
+```{r Instalacion PaqUEtes, include=FALSE}
+# Para instalar paqUEtes qUE no esten descargados qUE sean necesarios
+lista.de.paquete1 <- c("tidyverse","stargazer", "lubridate", "patchwork")
+nuevo.paquete1 <- lista.de.paquete1[!(lista.de.paquete1 %in% 
+                                          installed.packages()[,"Package"])]
+if(length(nuevo.paquete1)) install.packages(nuevo.paquete1, dependencies = TRUE, force = TRUE)
+```
+
+
+```{r PaqUEtes reeqUEridos, echo=TRUE}
+library(dplyr)
+library(ggplot2)
+```
+
+
+```{r}
+P_c <- read.csv("DatosPIBPrecio.csv")
+nrow(P_c)
+P_c <- P_c[1:169,]
+head(P_c)
+tail(P_c)
+summary(P_c)
+str(P_c)
+```
+
+
+```{r}
+P_c$Fecha = as.Date(P_c$Fecha, format = "%Y-%m-%d") # convert date, to date format
+P_c$Anio <- as.factor(P_c$Anio)
+P_c$California_Quebec <- gsub("\\$","", P_c$California_Quebec)
+P_c$California_Quebec <- as.numeric(P_c$California_Quebec)
+
+str(P_c)
+typeof(P_c$Fecha)
+typeof(P_c$Anio)
+```
+
+
+```{r}
+str(P_c)
+```
+
+
+```{r}
+P_cG <- ggplot(P_c) + geom_point(aes(x = Fecha, y = UE, size = PIB_UE, color = "UE"), alpha = 0.4) +
+       geom_point(aes(x = Fecha, y = California_Quebec, size = PIB_CaliforniaQuebec, color = "CALQUE"), alpha = 0.4) +
+       geom_point(aes(x = Fecha, y = RGGI, size = PIB_RGGI, color = "UE"), alpha = 0.4) +
+       geom_point(aes(x = Fecha, y = Corea, size = PIB_Corea, color = "Corea"), alpha = 0.4) +
+       geom_point(aes(x = Fecha, y = NuevaZelanda, size = PIB_NuevaZelanda, color = "NUEvaZelanda"), alpha = 0.4)
+```
+
+
+```{r}
+P_cG <- P_cG + 
+       scale_color_manual(name = "Jurisdicción", values = c(UE = "Red", CALQUE = "Orange", RGGI = "BlUE", Corea = "DarkGreen", NuevaZelanda = "Black")) + scale_size_continuous(name = "PIB")
+
+```
+
+
+```{r}
+P_cG <- P_cG + theme_minimal()
+```
+
+```{r}
+P_cG
+```
+
+
+```{r}
+# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
+P_cG <- P_cG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
+
+
+# lUEgo otra linea qUE representa llegada de vacunas y disminucion de casos
+P_cG <- P_cG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
+
+
+# Agregamos una ultima linea representando el inicio de la tercera ola:
+P_cG <- P_cG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
+
+
+# Protocolo de Kyoto entró en vigor
+P_cG <- P_cG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+P_cG <- P_cG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+P_cG <- P_cG +
+scale_linetype_manual(name = "Fechas Importantes", values =
+                   c(SanaDistancia = 6,
+                      PrimerasVacunas = 2,
+                       TerceraOla = 1, PKyotoVigor = 4,
+                     TParisVigor = 3))
+
+```
+
+
+```{r}
+P_cG
+```
+
+
+```{r}
+P_cG <- P_cG +   
+  xlab("Año") + # nombre de eje x
+  ylab("Precio (USD/tCO2e)") + # nombre de eje y
+  labs(caption = "Elaborado por WRI México con datos de ICAP, Banco Mundial, UE, CARB, bea y QUEbec International") +
+  ggtitle("Precios del carbono en el mundo y PIB") + # titulo de grafica
+  theme(axis.title.x = element_text(color="Black", size=10), # tamanio y color de titulo del eje x
+        axis.title.y = element_text(color = " Black", size=10), # tamanio y color del titulo del eje y
+        
+        axis.text.x = element_text(size=10), # tamanio y color de los numeros del eje x
+        axis.text.y = element_text(size=10),# tamanio y color de los numeros del eje y
+        legend.key.height = unit(0.5, "cm"),
+        legend.title = element_text(size=8), # tamanio del titulo del indice
+        legend.text = element_text(size=6), # tamanio del texto del indice
+        legend.position = "right",
+        legend.justification = c(1,1), # posicion de inidice
+        
+        plot.title = element_text(color="DarkBlUE", # color del titulo de grafica
+                                  size=15, # tamanio del titulo de grafica
+                                  family="Courier"))  # tipo de letra del titulo de grafica
+```
+
+
+```{r}
+P_cG
+```
+
+
+```{r}
+UEG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = UE, color = "Precio")) + geom_line(aes(x = Fecha, y = (((PIB_UE/100000) - 120))*2 , color = "PIB")) + scale_y_continuous(
+    
+    # Primer Eje
+    name = "Precio (USD/tCO2e)",
+    
+    # Segundo Eje
+    sec.axis = sec_axis(~./4.6875*100000 , name="PIB")
+  )
+
+```
+
+
+```{r}
+# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
+UEG <- UEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
+
+
+# lUEgo otra linea qUE representa llegada de vacunas y disminucion de casos
+UEG <- UEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
+
+
+# Agregamos una ultima linea representando el inicio de la tercera ola:
+UEG <- UEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
+
+
+# Protocolo de Kyoto entró en vigor
+UEG <- UEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+UEG <- UEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+UEG <- UEG +
+scale_linetype_manual(name = "Fechas Importantes", values =
+                   c(SanaDistancia = 6,
+                      PrimerasVacunas = 2,
+                       TerceraOla = 1, PKyotoVigor = 4,
+                     TParisVigor = 3))
+
+```
+
+
+```{r}
+UEG <- UEG + theme_minimal()
+```
+
+```{r}
+UEG <- UEG +
+  xlab("Año") + # nombre de eje x
+  ylab("Precio (USD/tCO2e)") + # nombre de eje y
+  labs(caption = "Elaborado por WRI México con datos de ICAP, Banco Mundial y Corthouse news") +
+  ggtitle("Precios del carbono y PIB UE") + # titulo de grafica
+  theme(axis.title.x = element_text(color="Black", size=8), # tamanio y color de titulo del eje x
+        axis.title.y = element_text(color = " Black", size=8), # tamanio y color del titulo del eje y
+        
+        axis.text.x = element_text(size=8), # tamanio y color de los numeros del eje x
+        axis.text.y = element_text(size=8),# tamanio y color de los numeros del eje y
+        legend.key.height = unit(0.5, "cm"),
+        legend.title = element_text(size=8), # tamanio del titulo del indice
+        legend.text = element_text(size=6), # tamanio del texto del indice
+        legend.position = "right",
+        legend.justification = c(1,1), # posicion de inidice
+        
+        plot.title = element_text(color="DarkBlUE", # color del titulo de grafica
+                                  size=15, # tamanio del titulo de grafica
+                                  family="Courier"))  # tipo de letra del titulo de grafica 
+
+```
+
+
+```{r}
+UEG <- UEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+CoreaG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = Corea, color = "Precio")) + geom_line(aes(x = Fecha, y = (PIB_Corea/100000)*2.5 - 12.5 , color = "PIB")) + scale_y_continuous(
+    
+    # Primer Eje
+    name = "Precio (USD/tCO2e)",
+    
+    # Segundo Eje
+    sec.axis = sec_axis(~.*80000/2 + 500000, name="PIB", breaks = c(1000000, 1200000, 1400000, 1600000))
+  )
+
+
+```
+
+
+```{r}
+# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
+CoreaG <- CoreaG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
+
+
+# lCoreago otra linea qCorea representa llegada de vacunas y disminucion de casos
+CoreaG <- CoreaG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
+
+
+# Agregamos una ultima linea representando el inicio de la tercera ola:
+CoreaG <- CoreaG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
+
+
+# Protocolo de Kyoto entró en vigor
+CoreaG <- CoreaG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+CoreaG <- CoreaG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+CoreaG <- CoreaG +
+scale_linetype_manual(name = "Fechas Importantes", values =
+                   c(SanaDistancia = 6,
+                      PrimerasVacunas = 2,
+                       TerceraOla = 1, PKyotoVigor = 4,
+                     TParisVigor = 3))
+
+```
+
+
+```{r}
+CoreaG <- CoreaG + theme_minimal()
+```
+
+```{r}
+CoreaG <- CoreaG +
+  xlab("Año") + # nombre de eje x
+  ylab("Precio (USD/tCO2e)") + # nombre de eje y
+  labs(caption = "Elaborado por WRI México con datos de ICAP, Banco Mundial y CNBC") +
+  ggtitle("Precios del carbono y PIB Corea") + # titulo de grafica
+  theme(axis.title.x = element_text(color="Black", size=8), # tamanio y color de titulo del eje x
+        axis.title.y = element_text(color = " Black", size=8), # tamanio y color del titulo del eje y
+        
+        axis.text.x = element_text(size=8), # tamanio y color de los numeros del eje x
+        axis.text.y = element_text(size=8),# tamanio y color de los numeros del eje y
+        legend.key.height = unit(0.5, "cm"),
+        legend.title = element_text(size=8), # tamanio del titulo del indice
+        legend.text = element_text(size=6), # tamanio del texto del indice
+        legend.position = "right",
+        legend.justification = c(1,1), # posicion de inidice
+        
+        plot.title = element_text(color="DarkBlue", # color del titulo de grafica
+                                  size=15, # tamanio del titulo de grafica
+                                  family="Courier"))  # tipo de letra del titulo de grafica 
+
+```
+
+
+```{r}
+CoreaG <- CoreaG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
+```
+
+
+```{r}
+CoreaG
+```
+
+```{r}
+P_c
+```
+
+```{r}
+P_c2 <- P_c[complete.cases(P_c$California_Quebec),]
+ggplot(P_c2) + geom_line(aes_(x = P_c2$Fecha, y = P_c2$California_Quebec, group = 1), na.rm = T)
+```
+
+
+```{r}
+ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_CaliforniaQuebec, color = "PIB"), na.rm = T)
+```
+
+```{r}
+CALQUEG <- ggplot(P_c) + geom_line(data = P_c2, aes_(x = P_c2$Fecha, y = P_c2$California_Quebec, group = 1, color = "Precio"), na.rm = T) + geom_line(aes(x = Fecha, y = (PIB_CaliforniaQuebec/400000) - 5, color = "PIB"), na.rm = T) + scale_y_continuous(
+    
+    # Primer Eje
+    name = "Precio (USD/tCO2e)",
+    
+    # Segundo Eje
+    sec.axis = sec_axis(~.*400000 + 2000000, name="PIB", breaks = c(9000000, 10000000, 11000000))
+  )
+
+```
+
+
+```{r}
+# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
+CALQUEG <- CALQUEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
+
+
+# lCALQUEGo otra linea qCorea representa llegada de vacunas y disminucion de casos
+CALQUEG <- CALQUEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
+
+
+# Agregamos una ultima linea representando el inicio de la tercera ola:
+CALQUEG <- CALQUEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
+
+
+# Protocolo de Kyoto entró en vigor
+CALQUEG <- CALQUEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+CALQUEG <- CALQUEG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+CALQUEG <- CALQUEG +
+scale_linetype_manual(name = "Fechas Importantes", values =
+                   c(SanaDistancia = 6,
+                      PrimerasVacunas = 2,
+                       TerceraOla = 1, PKyotoVigor = 4,
+                     TParisVigor = 3))
+
+```
+
+
+```{r}
+CALQUEG <- CALQUEG + theme_minimal()
+```
+
+```{r}
+CALQUEG <- CALQUEG +
+  xlab("Año") + # nombre de eje x
+  ylab("Precio (USD/tCO2e)") + # nombre de eje y
+  labs(caption = "CARB, bea, Quebec International y Institut de la statistique du Québec") +
+  ggtitle("Precios del carbono y PIB California-Quebec") + # titulo de grafica
+  theme(axis.title.x = element_text(color="Black", size=8), # tamanio y color de titulo del eje x
+        axis.title.y = element_text(color = " Black", size=8), # tamanio y color del titulo del eje y
+        
+        axis.text.x = element_text(size=8), # tamanio y color de los numeros del eje x
+        axis.text.y = element_text(size=8),# tamanio y color de los numeros del eje y
+        legend.key.height = unit(0.5, "cm"),
+        legend.title = element_text(size=8), # tamanio del titulo del indice
+        legend.text = element_text(size=6), # tamanio del texto del indice
+        legend.position = "right",
+        legend.justification = c(1,1), # posicion de inidice
+        
+        plot.title = element_text(color="DarkBlue", # color del titulo de grafica
+                                  size=15, # tamanio del titulo de grafica
+                                  family="Courier"))  # tipo de letra del titulo de grafica 
+
+```
+
+
+```{r}
+CALQUEG <- CALQUEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
+```
+
+
+```{r}
+CALQUEG
+```
+
+```{r}
+P_c
+```
+
+
+
+
+```{r}
+P_c3 <- P_c[complete.cases(P_c$RGGI),]
+ggplot(P_c3) + geom_line(aes_(x = P_c3$Fecha, y = P_c3$RGGI, group = 1), na.rm = T)
+```
+
+
+```{r}
+ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_RGGI, color = "PIB"), na.rm = T)
+```
+
+```{r}
+RGGIGG <- ggplot(P_c) + geom_line(data = P_c3, aes_(x = P_c3$Fecha, y = P_c3$RGGI, group = 1, color = "Precio"), na.rm = T) + geom_line(aes(x = Fecha, y = (PIB_RGGI/2000000)*2 - 7, color = "PIB"), na.rm = T) + scale_y_continuous(
+    
+    # Primer Eje
+    name = "Precio (USD/tCO2e)",
+    
+    # Segundo Eje
+    sec.axis = sec_axis(~.*2000000/2 + 7000000, name="PIB", breaks = c(14000000, 16000000, 18000000))
+  )
+
+```
+
+
+```{r}
+# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
+RGGIGG <- RGGIGG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
+
+
+# lRGGIGGo otra linea qCorea representa llegada de vacunas y disminucion de casos
+RGGIGG <- RGGIGG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
+
+
+# Agregamos una ultima linea representando el inicio de la tercera ola:
+RGGIGG <- RGGIGG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
+
+
+# Protocolo de Kyoto entró en vigor
+RGGIGG <- RGGIGG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+RGGIGG <- RGGIGG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+RGGIGG <- RGGIGG +
+scale_linetype_manual(name = "Fechas Importantes", values =
+                   c(SanaDistancia = 6,
+                      PrimerasVacunas = 2,
+                       TerceraOla = 1, PKyotoVigor = 4,
+                     TParisVigor = 3))
+
+```
+
+
+```{r}
+RGGIGG <- RGGIGG + theme_minimal()
+```
+
+```{r}
+RGGIGG <- RGGIGG +
+  xlab("Año") + # nombre de eje x
+  ylab("Precio (USD/tCO2e)") + # nombre de eje y
+  labs(caption = "Elaborado por WRI México con datos de bea y rggi.org") +
+  ggtitle("Precios del carbono y PIB RGGI") + # titulo de grafica
+  theme(axis.title.x = element_text(color="Black", size=8), # tamanio y color de titulo del eje x
+        axis.title.y = element_text(color = " Black", size=8), # tamanio y color del titulo del eje y
+        
+        axis.text.x = element_text(size=8), # tamanio y color de los numeros del eje x
+        axis.text.y = element_text(size=8),# tamanio y color de los numeros del eje y
+        legend.key.height = unit(0.5, "cm"),
+        legend.title = element_text(size=8), # tamanio del titulo del indice
+        legend.text = element_text(size=6), # tamanio del texto del indice
+        legend.position = "right",
+        legend.justification = c(1,1), # posicion de inidice
+        
+        plot.title = element_text(color="DarkBlue", # color del titulo de grafica
+                                  size=15, # tamanio del titulo de grafica
+                                  family="Courier"))  # tipo de letra del titulo de grafica 
+
+```
+
+
+```{r}
+RGGIGG <- RGGIGG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
+```
+
+
+```{r}
+RGGIGG
+```
+
+
+```{r}
+ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio"))
+```
+
+```{r}
+ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_NuevaZelanda, color = "PIB"))
+```
+
+```{r}
+NZG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio")) + geom_line(aes(x = Fecha, y = (PIB_NuevaZelanda/3750)*2 - 60, color = "PIB")) + scale_y_continuous(
+    
+    # Primer Eje
+    name = "Precio (USD/tCO2e)",
+    
+    # Segundo Eje
+    sec.axis = sec_axis(~.*3750/2 + 113000, name="PIB", breaks = c(125000, 150000, 175000, 200000, 225000))
+  )
+
+```
+
+
+```{r}
+# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
+NZG <- NZG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), linetype = "SanaDistancia"))
+
+
+# lNZGo otra linea qUE representa llegada de vacunas y disminucion de casos
+NZG <- NZG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), linetype = "PrimerasVacunas"))
+
+
+# Agregamos una ultima linea representando el inicio de la tercera ola:
+NZG <- NZG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2021-07-01")), linetype = "TerceraOla"))
+
+
+# Protocolo de Kyoto entró en vigor
+NZG <- NZG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), linetype = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+NZG <- NZG +
+  geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), linetype = "TParisVigor"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+NZG <- NZG +
+scale_linetype_manual(name = "Fechas Importantes", values =
+                   c(SanaDistancia = 6,
+                      PrimerasVacunas = 2,
+                       TerceraOla = 1, PKyotoVigor = 4,
+                     TParisVigor = 3))
+
+```
+
+
+```{r}
+NZG <- NZG + theme_minimal()
+```
+
+```{r}
+NZG <- NZG +
+  xlab("Año") + # nombre de eje x
+  ylab("Precio (USD/tCO2e)") + # nombre de eje y
+  labs(caption = "Elaborado por WRI México con datos de ICAP y Banco Mundial") +
+  ggtitle("Precios del carbono y PIB Nueva Zelanda") + # titulo de grafica
+  theme(axis.title.x = element_text(color="Black", size=8), # tamanio y color de titulo del eje x
+        axis.title.y = element_text(color = " Black", size=8), # tamanio y color del titulo del eje y
+        
+        axis.text.x = element_text(size=8), # tamanio y color de los numeros del eje x
+        axis.text.y = element_text(size=8),# tamanio y color de los numeros del eje y
+        legend.key.height = unit(0.5, "cm"),
+        legend.title = element_text(size=8), # tamanio del titulo del indice
+        legend.text = element_text(size=6), # tamanio del texto del indice
+        legend.position = "right",
+        legend.justification = c(1,1), # posicion de inidice
+        
+        plot.title = element_text(color="DarkBlUE", # color del titulo de grafica
+                                  size=15, # tamanio del titulo de grafica
+                                  family="Courier"))  # tipo de letra del titulo de grafica 
+
+```
+
+
+```{r}
+NZG <- NZG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
+```
+
+```{r}
+NZG
+```
+
