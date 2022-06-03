@@ -74,14 +74,63 @@ str(P_c)
 P_c$Anio = as.Date(P_c$Anio, format = "%Y")
 
 
-UEG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = UE, color = "Precio"), na.rm =T) + geom_line(aes(x = Anio, y = (((PIB_UE/100000) - 120))*2 , color = "PIB"), na.rm = T) + scale_y_continuous(
+UEG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = UE, color = "Precio"), na.rm =T) + geom_line(aes(x = Anio, y = ((PIB_UE - 12500000)/16000-50)/2 , color = "PIB"), na.rm = T) + scale_y_continuous(
        
        # Primer Eje
        name = "Precio (USD/tCO2e)",
        
        # Segundo Eje
-       sec.axis = sec_axis(~./4.6875*100000 , name="PIB (millones de dólares)")
-)
+       sec.axis = sec_axis(~.*125000/4 + 13400000 , name="PIB (millones de dólares)", breaks = c(13500000, 14000000, 14500000, 15000000, 15500000, 16000000)))
+
+
+
+
+
+
+
+UEG <- UEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
+
+#install.packages("ggnewscale")
+library(ggnewscale)
+
+
+# WHO declara pandemia:
+UEG <- UEG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-11")), color = "WHOPandemia"))
+
+
+# Crisis financiera 2008
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2008-01-01")), color = "Crisis2008"))
+
+
+# Protocolo de Kyoto entró en vigor
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Invacion Rusia
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
+
+# UE propone reducir a 55%
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2022-04-05")), color = "PropuestaUE55"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+UEG <- UEG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(WHOPandemia = "Green",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black",
+                                      Crisis2008 = "DarkBlue",
+                                      RusiaUcrania = "Gray",
+                                      PropuestaUE55 = "Red"))
+
 
 UEG <- UEG +
        xlab("Año") + # nombre de eje x
@@ -102,47 +151,6 @@ UEG <- UEG +
              plot.title = element_text(color="DarkBlUE", # color del titulo de grafica
                                        size=15, # tamanio del titulo de grafica
                                        family="Courier"))  # tipo de letra del titulo de grafica 
-
-
-
-
-
-UEG <- UEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
-
-#install.packages("ggnewscale")
-library(ggnewscale)
-
-
-# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
-UEG <- UEG + new_scale_color() +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
-
-
-# lUEgo otra linea qUE representa llegada de vacunas y disminucion de casos
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
-
-
-
-
-# Protocolo de Kyoto entró en vigor
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
-
-# Fecha de firma acUErdo de Paris
-UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-UEG <- UEG +
-       scale_color_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = "Green",
-                                      PrimerasVacunas = "Brown",
-                                      PKyotoVigor = "Orange",
-                                      TParisVigor = "Black"))
-
-
 
 
 
@@ -169,6 +177,50 @@ CoreaG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = Corea, color = "Precio"), n
 )
 
 
+
+
+
+CoreaG <- CoreaG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
+
+
+
+
+
+# WHO declara pandemia:
+CoreaG <- CoreaG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-11")), color = "WHOPandemia"))
+
+
+
+
+# Crisis financiera 2008
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2008-01-01")), color = "Crisis2008"))
+
+
+# Protocolo de Kyoto entró en vigor
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Invacion Rusia
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+CoreaG <- CoreaG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(WHOPandemia = "Green",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black",
+                                      Crisis2008 = "DarkBlue",
+                                      RusiaUcrania = "Gray"))
+
+
 CoreaG <- CoreaG +
        xlab("Año") + # nombre de eje x
        ylab("Precio (USD/tCO2e)") + # nombre de eje y
@@ -188,46 +240,6 @@ CoreaG <- CoreaG +
              plot.title = element_text(color="DarkBlue", # color del titulo de grafica
                                        size=15, # tamanio del titulo de grafica
                                        family="Courier"))  # tipo de letra del titulo de grafica 
-
-
-CoreaG <- CoreaG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
-
-
-
-
-
-# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
-CoreaG <- CoreaG + new_scale_color() +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
-
-
-# lCoreago otra linea qCorea representa llegada de vacunas y disminucion de casos
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
-
-
-
-
-
-# Protocolo de Kyoto entró en vigor
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
-
-# Fecha de firma acCoreardo de Paris
-CoreaG <- CoreaG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-CoreaG <- CoreaG +
-       scale_color_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = "Green",
-                                      PrimerasVacunas = "Brown",
-                                      PKyotoVigor = "Orange",
-                                      TParisVigor = "Black"))
-
-
-
 
 
 CoreaG <- CoreaG + theme_minimal()
@@ -259,6 +271,45 @@ CALQUEG <- ggplot(P_c) + geom_line(data = P_c2, aes_(x = P_c2$Fecha, y = P_c2$Ca
 )
 
 
+
+
+
+CALQUEG <- CALQUEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
+
+# Crisis financiera 2008
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2008-01-01")), color = "Crisis2008"))
+
+# WHO declara pandemia:
+CALQUEG <- CALQUEG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-11")), color = "WHOPandemia"))
+
+
+
+
+# Protocolo de Kyoto entró en vigor
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Invacion Rusia
+CALQUEG <- CALQUEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+CALQUEG <- CALQUEG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(WHOPandemia = "Green",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black",
+                                      Crisis2008 = "DarkBlue",
+                                      RusiaUcrania = "Gray"))
+
+
 CALQUEG <- CALQUEG +
        xlab("Año") + # nombre de eje x
        ylab("Precio (USD/tCO2e)") + # nombre de eje y
@@ -278,44 +329,6 @@ CALQUEG <- CALQUEG +
              plot.title = element_text(color="DarkBlue", # color del titulo de grafica
                                        size=15, # tamanio del titulo de grafica
                                        family="Courier"))  # tipo de letra del titulo de grafica 
-
-
-
-
-
-CALQUEG <- CALQUEG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
-
-
-
-# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
-CALQUEG <- CALQUEG + new_scale_color() +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
-
-
-# lCALQUEGo otra linea qCorea representa llegada de vacunas y disminucion de casos
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
-
-
-# Protocolo de Kyoto entró en vigor
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
-
-# Fecha de firma acCoreardo de Paris
-CALQUEG <- CALQUEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-CALQUEG <- CALQUEG +
-       scale_color_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = "Green",
-                                      PrimerasVacunas = "Brown",
-                                      PKyotoVigor = "Orange",
-                                      TParisVigor = "Black"))
-
-
-
 
 
 CALQUEG <- CALQUEG + theme_minimal()
@@ -349,6 +362,48 @@ RGGIGG <- ggplot(P_c) + geom_line(data = P_c3, aes_(x = P_c3$Fecha, y = P_c3$RGG
 )
 
 
+
+
+
+RGGIGG <- RGGIGG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
+
+
+# WHO declara pandemia:
+RGGIGG <- RGGIGG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-11")), color = "WHOPandemia"))
+
+
+
+
+# Crisis financiera 2008
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2008-01-01")), color = "Crisis2008"))
+
+# Protocolo de Kyoto entró en vigor
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acCoreardo de Paris
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Invacion Rusia
+RGGIGG <- RGGIGG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+RGGIGG <- RGGIGG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(WHOPandemia = "Green",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black",
+                                      Crisis2008 = "DarkBlue",
+                                      RusiaUcrania = "Gray"))
+
+
+
+
 RGGIGG <- RGGIGG +
        xlab("Año") + # nombre de eje x
        ylab("Precio (USD/tCO2e)") + # nombre de eje y
@@ -368,41 +423,6 @@ RGGIGG <- RGGIGG +
              plot.title = element_text(color="DarkBlue", # color del titulo de grafica
                                        size=15, # tamanio del titulo de grafica
                                        family="Courier"))  # tipo de letra del titulo de grafica 
-
-
-
-
-
-RGGIGG <- RGGIGG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "Blue"))
-
-
-# Agregamos una linea qCorea representa el inicio de la jornada de sana distancia:
-RGGIGG <- RGGIGG + new_scale_color() +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
-
-
-# lRGGIGGo otra linea qCorea representa llegada de vacunas y disminucion de casos
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
-
-
-# Protocolo de Kyoto entró en vigor
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
-
-# Fecha de firma acCoreardo de Paris
-RGGIGG <- RGGIGG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-RGGIGG <- RGGIGG +
-       scale_color_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = "Green",
-                                      PrimerasVacunas = "Brown",
-                                      PKyotoVigor = "Orange",
-                                      TParisVigor = "Black"))
-
 
 
 
@@ -434,6 +454,47 @@ NZG <- ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio"
 )
 
 
+
+NZG <- NZG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
+
+
+
+# WHO declara pandemia:
+NZG <- NZG + new_scale_color() +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-11")), color = "WHOPandemia"))
+
+
+# Crisis financiera 2008
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2008-01-01")), color = "Crisis2008"))
+
+
+
+
+# Protocolo de Kyoto entró en vigor
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
+
+# Fecha de firma acUErdo de Paris
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
+
+# Invacion Rusia
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
+
+# Agregamos una leyenda para las fechas importantes:
+
+NZG <- NZG +
+       scale_color_manual(name = "Fechas Importantes", values =
+                                    c(WHOPandemia = "Green",
+                                      PKyotoVigor = "Orange",
+                                      TParisVigor = "Black",
+                                      Crisis2008 = "DarkBlue",
+                                      RusiaUcrania = "Gray"))
+
+NZG <- NZG + theme_minimal()
+
 NZG <- NZG +
        xlab("Año") + # nombre de eje x
        ylab("Precio (USD/tCO2e)") + # nombre de eje y
@@ -457,45 +518,6 @@ NZG <- NZG +
 
 
 
-
-NZG <- NZG + scale_color_manual(name = "Indicador", values = c(PIB = "Red", Precio = "BlUE"))
-
-
-
-# Agregamos una linea qUE representa el inicio de la jornada de sana distancia:
-NZG <- NZG + new_scale_color() +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2020-03-23")), color = "SanaDistancia"))
-
-
-# lNZGo otra linea qUE representa llegada de vacunas y disminucion de casos
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2021-01-20")), color = "PrimerasVacunas"))
-
-
-# Protocolo de Kyoto entró en vigor
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2015-02-16")), color = "PKyotoVigor"))
-
-# Fecha de firma acUErdo de Paris
-NZG <- NZG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2016-12-04")), color = "TParisVigor"))
-
-# Agregamos una leyenda para las fechas importantes:
-
-NZG <- NZG +
-       scale_color_manual(name = "Fechas Importantes", values =
-                                    c(SanaDistancia = "Green",
-                                      PrimerasVacunas = "Brown",
-                                      PKyotoVigor = "Orange",
-                                      TParisVigor = "Black"))
-
-
-
-
-
-NZG <- NZG + theme_minimal()
-
-
 NZG
 
 
@@ -505,6 +527,9 @@ NZG
 
 
 *** 
+
+
+
 
 ```{r echo=FALSE}
 UEG
