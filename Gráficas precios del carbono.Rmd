@@ -118,7 +118,12 @@ UEG <- UEG +
 
 # UE propone reducir a 55%
 UEG <- UEG +
-       geom_vline(aes(xintercept = as.numeric(as.Date("2022-04-05")), color = "PropuestaUE55"))
+       geom_vline(aes(xintercept = as.numeric(as.Date("2020-04-05")), color = "PropuestaUE55"))
+
+# Black Monday
+UEG <- UEG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2011-08-08")), color = "BlackMonday"))
+
 
 # Agregamos una leyenda para las fechas importantes:
 
@@ -129,7 +134,11 @@ UEG <- UEG +
                                       TParisVigor = "Black",
                                       Crisis2008 = "DarkBlue",
                                       RusiaUcrania = "Gray",
-                                      PropuestaUE55 = "Red"))
+                                      PropuestaUE55 = "Red",
+                                      BlackMonday = "Brown"))
+
+
+UEG <- UEG + theme_minimal()
 
 
 UEG <- UEG +
@@ -154,14 +163,11 @@ UEG <- UEG +
 
 
 
-UEG <- UEG + theme_minimal()
+
+```
 
 
-
-
-
-
-
+```{r include=FALSE}
 ggplot(P_c) + geom_line(aes(x = Fecha, y = PIB_Corea , color = "PIB"))
 
 
@@ -210,6 +216,12 @@ CoreaG <- CoreaG +
 CoreaG <- CoreaG +
        geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
 
+# Corea aumenta ambición
+CoreaG <- CoreaG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-06-16")), color = "CoreaAumentaAmbición"))
+
+
+
 # Agregamos una leyenda para las fechas importantes:
 
 CoreaG <- CoreaG +
@@ -218,8 +230,11 @@ CoreaG <- CoreaG +
                                       PKyotoVigor = "Orange",
                                       TParisVigor = "Black",
                                       Crisis2008 = "DarkBlue",
-                                      RusiaUcrania = "Gray"))
+                                      RusiaUcrania = "Gray",
+                                      CoreaAumentaAmbición = "Brown"))
 
+
+CoreaG <- CoreaG + theme_minimal()
 
 CoreaG <- CoreaG +
        xlab("Año") + # nombre de eje x
@@ -242,15 +257,14 @@ CoreaG <- CoreaG +
                                        family="Courier"))  # tipo de letra del titulo de grafica 
 
 
-CoreaG <- CoreaG + theme_minimal()
-
-
-
 
 
 CoreaG
 
+```
 
+
+```{r include=FALSE}
 P_c2 <- P_c[complete.cases(P_c$California_Quebec),]
 ggplot(P_c2) + geom_line(aes_(x = P_c2$Fecha, y = P_c2$California_Quebec, group = 1), na.rm = T)
 
@@ -309,6 +323,7 @@ CALQUEG <- CALQUEG +
                                       Crisis2008 = "DarkBlue",
                                       RusiaUcrania = "Gray"))
 
+CALQUEG <- CALQUEG + theme_minimal()
 
 CALQUEG <- CALQUEG +
        xlab("Año") + # nombre de eje x
@@ -331,16 +346,13 @@ CALQUEG <- CALQUEG +
                                        family="Courier"))  # tipo de letra del titulo de grafica 
 
 
-CALQUEG <- CALQUEG + theme_minimal()
-
-
-
-
-
 
 
 CALQUEG
+```
 
+
+```{r include=FALSE}
 
 P_c3 <- P_c[complete.cases(P_c$RGGI),]
 ggplot(P_c3) + geom_line(aes_(x = P_c3$Fecha, y = P_c3$RGGI, group = 1), na.rm = T)
@@ -401,7 +413,7 @@ RGGIGG <- RGGIGG +
                                       Crisis2008 = "DarkBlue",
                                       RusiaUcrania = "Gray"))
 
-
+RGGIGG <- RGGIGG + theme_minimal()
 
 
 RGGIGG <- RGGIGG +
@@ -427,14 +439,12 @@ RGGIGG <- RGGIGG +
 
 
 
-RGGIGG <- RGGIGG + theme_minimal()
-
-
 
 RGGIGG
+```
 
 
-
+```{r include=FALSE}
 
 ggplot(P_c) + geom_line(aes(x = Fecha, y = NuevaZelanda, color = "Precio"))
 
@@ -483,6 +493,14 @@ NZG <- NZG +
 NZG <- NZG +
        geom_vline(aes(xintercept = as.numeric(as.Date("2022-02-24")), color = "RusiaUcrania"))
 
+# Black Monday
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2011-08-08")), color = "BlackMonday"))
+
+# abolishion of fixed-price option
+NZG <- NZG +
+       geom_vline(aes(xintercept = as.numeric(as.Date("2021-06-08")), color = "AbolishFixedPrice"))
+
 # Agregamos una leyenda para las fechas importantes:
 
 NZG <- NZG +
@@ -491,7 +509,9 @@ NZG <- NZG +
                                       PKyotoVigor = "Orange",
                                       TParisVigor = "Black",
                                       Crisis2008 = "DarkBlue",
-                                      RusiaUcrania = "Gray"))
+                                      RusiaUcrania = "Gray",
+                                      BlackMonday = "Brown",
+                                      AbolishFixedPrice = "Yellow"))
 
 NZG <- NZG + theme_minimal()
 
